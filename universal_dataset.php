@@ -1,8 +1,21 @@
 <?php
-function extract_all() {
-$files = array("1.csv","2.csv","3.csv","4.csv","5.csv","6.csv","7.csv","8.csv","9.csv");
-foreach ($files as $file) {
-	$content = file("legitimate1314csv/".$file);
+function extract_all($folder_path) {
+$PATH = $folder_path; //folder path
+$extension = ".csv"; //file type
+
+//read directory contents
+$files = scandir($PATH);
+
+$csv_files = array(); //csv files array
+
+foreach($files as $filename){
+	if(substr($filename,-4) == $extension){
+		$csv_files[] = $PATH.'/'.$filename;
+		}
+	}
+
+foreach ($csv_files as $file) {
+	$content = file($file);
 	$rows = array_map('str_getcsv', $content,array_fill(0, count($content), ","));
 	foreach ($rows as $row) {
 		foreach($row as $id=>$rw) {
