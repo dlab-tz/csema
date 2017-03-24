@@ -1,8 +1,8 @@
 <?php
 function extract_all() {
-$files = array("csema1.csv","csema2.csv");
+$files = array("1.csv","2.csv","3.csv","4.csv","5.csv","6.csv","7.csv","8.csv","9.csv");
 foreach ($files as $file) {
-	$content = file($file);
+	$content = file("legitimate1314csv/".$file);
 	$rows = array_map('str_getcsv', $content,array_fill(0, count($content), ","));
 	foreach ($rows as $row) {
 		foreach($row as $id=>$rw) {
