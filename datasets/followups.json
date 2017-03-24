@@ -1,0 +1,40 @@
+[
+    {
+        "District": "Busega",
+        "Child Age": "12",
+        "Child Sex": "Female",
+        "Call Duration": 32,
+        "Call Start Time": "19:40",
+        "Call End Time": "20:12",
+        "Type of Caller": "Other Care Giver",
+        "VANE": [
+            "Physical Violence",
+            "Rape",
+            "Neglect",
+            "Child Pregnancy",
+            "Traditional Practices",
+            "Neighbour(s)"
+        ],
+        "Perpetrator": "Neighbour(s)",
+        "Followup Initiated by the Caller": "2",
+        "Followup Initiated by the Helpline": "1"
+    },
+    {
+        "District": "",
+        "Child Age": "",
+        "Child Sex": "Male",
+        "Call Duration": 1,
+        "Call Start Time": "17:30",
+        "Call End Time": "17:31",
+        "Type of Caller": "Other Adult",
+        "VANE": [
+            "Neglect",
+            "Child Pregnancy",
+            "Kidnapping",
+            "Tourist(s)"
+        ],
+        "Perpetrator": "Tourist(s)",
+        "Followup Initiated by the Caller": "",
+        "Followup Initiated by the Helpline": ""
+    }
+]
