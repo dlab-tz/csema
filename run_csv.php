@@ -1,8 +1,9 @@
 <?php
 
-$PATH = "./Legitimate";
+$legitimate_path = "./Legitimate";
+$non_legit_path = "./Non_Legit";
 include("universal_dataset.php");
-$universal = extract_all($PATH);
+$universal = extract_all($legitimate_path);
 
 
 //FUNCTION EXECUTIONS
@@ -11,6 +12,7 @@ call_followups($universal);
 vane_calls($universal);
 nonvane_calls($universal);
 referral_calls($universal);
+nonlegitimate_calls($non_legit_path);
 
 //FUNCTION DEFINITIONS
 
@@ -176,6 +178,7 @@ function nonvane_calls($universal){
 	//print_r($json);
 	}
 
+
 /********************************************************
  * FUNCTION TO MONITOR REFERRAL CASES
  *******************************************************/
@@ -213,7 +216,6 @@ function referral_calls($universal){
 				foreach ($data["Action Taken"]["Details of Referral"] as $ref_key=>$referral) {
 					$referrals[$key][$ref_key] = $referral;
 					}
-				print_r($referrals);
 				$referrals[$key]["Referal Acknowledgement Duration"] = get_days($referrals[$key]["Date Referred"],$referrals[$key]["Date Referral Acknowleged"]);
 				}
 			}
@@ -224,8 +226,47 @@ function referral_calls($universal){
 	//print_r($json);
 	}
 
+
 /********************************************************
- * FUNCTION TO CONVERT DATE STRING TO TIME DURATION
+ * FUNCTION TO MONITOR NON-LEGITIMATE CALLS
+ *******************************************************/
+function nonlegitimate_calls($non_legit_path){
+	foreach (glob($non_legit_path."/*.csv") as $file) {
+		$files[] = $file;
+		}
+
+	foreach ($files as $file) {
+		$content = file($file);
+		$rows = array_map('str_getcsv', $content,array_fill(0, count($content), ","));
+		foreach ($rows as $row) {
+			foreach($row as $id=>$rw) {
+				$row[$id] = trim($rw);
+			}
+			$csema_data[] = $row;
+		}
+	}
+
+	foreach ($csema_data as $top_key=>$subarr) {
+		foreach ($subarr as $key => $csema) {
+			if($key==6)
+				$nonlegitimate[$top_key]["Date"] = $csema;
+			if($key==7)
+				$nonlegitimate[$top_key]["Start Time"] = $csema;
+			if($key==8)
+				$nonlegitimate[$top_key]["Finish Time"] = $csema;
+			if($key==9)
+				$nonlegitimate[$top_key]["Type Of Call"] = $csema;
+			}
+		$nonlegitimate[$top_key]["Call Duration"] = get_duration($subarr[7],$subarr[8]);
+		}
+	$json = json_encode($nonlegitimate,JSON_PRETTY_PRINT);
+	file_put_contents("datasets/nonlegitimate.json",$json);
+	//print_r($json);
+	}
+
+
+/********************************************************
+ * FUNCTION TO CONVERT DATE STRING TO TIME DAYS
  *******************************************************/
 function get_days($date1,$date2) {
 	if($date1=="" or $date2=="")

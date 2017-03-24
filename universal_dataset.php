@@ -95,6 +95,10 @@ foreach ($csema_data as $top_key=>$subarr) {
 return $csema_data;
 }
 
+
+/********************************************************
+ * FUNCTION TO CONVERT TIME STRING TO TIME DURATION
+ *******************************************************/
 function get_duration($time1,$time2) {
 	$time1= strtotime($time1);
 	$time2= strtotime($time2);
