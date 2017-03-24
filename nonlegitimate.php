@@ -1,5 +1,8 @@
 <?php
-$files = array("1.csv");
+foreach (glob("nonlegitimate1314csv/*.csv") as $file) {
+  $files[] = $file;
+}
+
 foreach ($files as $file) {
 	$content = file($file);
 	$rows = array_map('str_getcsv', $content,array_fill(0, count($content), ","));
