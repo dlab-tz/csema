@@ -1,7 +1,7 @@
 <?php
 
-$legitimate_path = "./Legitimate";
-$non_legit_path = "./Non_Legit";
+$legitimate_path = "./legitimateall";
+$non_legit_path = "./nonlegitimateall";
 include("universal_dataset.php");
 $universal = extract_all($legitimate_path);
 
@@ -28,6 +28,8 @@ function call_action($universal){
 		$call_action[$key]["Call Start Time"] = $data["Call Start Time"];
 		$call_action[$key]["Call End Time"] = $data["Call End Time"];
 		$call_action[$key]["Type of Caller"] = $data["Type of Caller"];
+		$call_action[$key]["Call Date"] = $data["Call Date"];
+		$call_action[$key]["id"]=$key;
 		if(array_key_exists("Action Taken",$data)) {
 			foreach ($data["Action Taken"] as $act_key=>$action) {
 				$call_action[$key]["Action Taken"][] = $act_key;
@@ -61,10 +63,12 @@ function call_followups($universal){
 		$followups[$key]["Call Start Time"] = $data["Call Start Time"];
 		$followups[$key]["Call End Time"] = $data["Call End Time"];
 		$followups[$key]["Type of Caller"] = $data["Type of Caller"];
-		
+		$followups[$key]["Call Date"] = $data["Call Date"];
 		if(array_key_exists("call reason",$data)) {
 			if(array_key_exists("VANE",$data["call reason"])) {
 				foreach ($data["call reason"]["VANE"] as $vane_key => $value) {
+					if($vane_key == "Perpetrator")
+					continue;
 					$followups[$key]["VANE"][] = $value;
 					}
 				if(array_key_exists("Perpetrator",$data["call reason"]["VANE"])) {
@@ -74,7 +78,7 @@ function call_followups($universal){
 					$followups[$key]["Perpetrator"] = "";
 				}
 			}
-		
+
 		if(array_key_exists("Action Taken",$data)) {
 			if(array_key_exists("Extra Calls (Follow-up or Feedback)",$data["Action Taken"])) {
 				foreach ($data["Action Taken"]["Extra Calls (Follow-up or Feedback)"] as $foll_key=>$followup) {
@@ -87,10 +91,10 @@ function call_followups($universal){
 					}
 				}
 			}
-		
+
 		if(!array_key_exists("Followup Initiated by the Caller",$followups[$key]))
 			$followups[$key]["Followup Initiated by the Caller"] = "";
-			
+
 		if(!array_key_exists("Followup Initiated by the Helpline",$followups[$key]))
 			$followups[$key]["Followup Initiated by the Helpline"] = "";
 		}
@@ -112,7 +116,8 @@ function vane_calls($universal){
 		$vane[$key]["Call Start Time"] = $data["Call Start Time"];
 		$vane[$key]["Call End Time"] = $data["Call End Time"];
 		$vane[$key]["Type of Caller"] = $data["Type of Caller"];
-		
+		$vane[$key]["Call Date"] = $data["Call Date"];
+
 		if(array_key_exists("call reason",$data)) {
 			if(array_key_exists("VANE",$data["call reason"])) {
 			foreach ($data["call reason"]["VANE"] as $vane_key => $value) {
@@ -144,7 +149,8 @@ function nonvane_calls($universal){
 		$nonvane[$key]["Call Start Time"] = $data["Call Start Time"];
 		$nonvane[$key]["Call End Time"] = $data["Call End Time"];
 		$nonvane[$key]["Type of Caller"] = $data["Type of Caller"];
-		
+		$nonvane[$key]["Call Date"] = $data["Call Date"];
+
 		if(array_key_exists("call reason",$data)) {
 			if(array_key_exists("NON VANE",$data["call reason"])) {
 				foreach ($data["call reason"]["NON VANE"] as $value) {
@@ -152,23 +158,23 @@ function nonvane_calls($universal){
 					}
 				}
 			}
-			
+
 		if(!array_key_exists("NON VANE",$nonvane[$key])) {
 			$nonvane[$key]["NON VANE"] = array();
 			}
-			
+
 		if(array_key_exists("call reason",$data)) {
 			if(array_key_exists("helpline issues",$data["call reason"])) {
 				foreach ($data["call reason"]["helpline issues"] as $value) {
 					$nonvane[$key]["Other"][] = $value;
 					}
 				}
-				
+
 			if(array_key_exists("Outside Mandate",$data["call reason"])) {
 				$nonvane[$key]["Other"][] = $data["call reason"]["Outside Mandate"];
 				}
 			}
-			
+
 		if(!array_key_exists("Other",$data)) {
 			$data[$key]["Other"] = array();
 			}
@@ -184,6 +190,8 @@ function nonvane_calls($universal){
  *******************************************************/
 function referral_calls($universal){
 	foreach ($universal as $key=>$data) {
+		if(!array_key_exists("Referral By Helpline",$data["Action Taken"]))
+		continue;
 		$referrals[$key]["District"] = $data["District"];
 		$referrals[$key]["Child Age"] = $data["Child Age"];
 		$referrals[$key]["Child Sex"] = $data["Child Sex"];
@@ -191,7 +199,8 @@ function referral_calls($universal){
 		$referrals[$key]["Call Start Time"] = $data["Call Start Time"];
 		$referrals[$key]["Call End Time"] = $data["Call End Time"];
 		$referrals[$key]["Type of Caller"] = $data["Type of Caller"];
-		
+		$referrals[$key]["Call Date"] = $data["Call Date"];
+
 		if(array_key_exists("call reason",$data)) {
 			if(array_key_exists("VANE",$data["call reason"])) {
 				foreach ($data["call reason"]["VANE"] as $vane_key => $value) {
@@ -204,14 +213,14 @@ function referral_calls($universal){
 					$referrals[$key]["Perpetrator"] = "";
 				}
 			}
-		
+
 		if(array_key_exists("Action Taken",$data)) {
 			if(array_key_exists("Referral By Helpline",$data["Action Taken"])) {
 				$referrals[$key]["Referral"] = "Referral By Helpline";
 				}
 			else
 				$referrals[$key]["Referral"] = "";
-			
+
 			if(array_key_exists("Details of Referral",$data["Action Taken"])) {
 				foreach ($data["Action Taken"]["Details of Referral"] as $ref_key=>$referral) {
 					$referrals[$key][$ref_key] = $referral;
@@ -220,7 +229,7 @@ function referral_calls($universal){
 				}
 			}
 		}
-		
+
 	$json = json_encode($referrals,JSON_PRETTY_PRINT);
 	file_put_contents("datasets/refferals.json",$json);
 	//print_r($json);
@@ -248,8 +257,13 @@ function nonlegitimate_calls($non_legit_path){
 
 	foreach ($csema_data as $top_key=>$subarr) {
 		foreach ($subarr as $key => $csema) {
-			if($key==6)
-				$nonlegitimate[$top_key]["Date"] = $csema;
+			if($key==6) {
+				$date = explode("/",$csema);
+                		if($date[2])
+		                $date[2] = "20".$date[2];
+                		$date = implode("/",$date);
+				$nonlegitimate[$top_key]["Call Date"] = $date;
+			}
 			if($key==7)
 				$nonlegitimate[$top_key]["Start Time"] = $csema;
 			if($key==8)
@@ -271,15 +285,15 @@ function nonlegitimate_calls($non_legit_path){
 function get_days($date1,$date2) {
 	if($date1=="" or $date2=="")
 		return;
-	
+
 	$date1 = explode("/",$date1);
-	$date1 = $date1[0]."-".$date1[1]."-20".$date1[2];
+	$date1 = $date1[0]."-".$date1[1].$date1[2];
 	$date2 = explode("/",$date2);
-	$date2 = $date2[0]."-".$date2[1]."-20".$date2[2];
+	$date2 = $date2[0]."-".$date2[1].$date2[2];
 	$date1= strtotime($date1);
 	$date2= strtotime($date2);
 	$datediff = $date2-$date1;
-	
+
 	return floor($datediff / (60 * 60 * 24));
 	}
 ?>

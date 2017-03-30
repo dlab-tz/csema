@@ -42,7 +42,23 @@ $other_headers = array(6=>"Call Date",7=>"Call Start Time",8=>"Call End Time",9=
 foreach ($csema_data as $top_key=>$subarr) {
 	$csema_data[$top_key]["Call Duration"] = get_duration($subarr[7],$subarr[8]);
 	foreach ($subarr as $key => $csema) {
+		$csema = ucwords(strtolower($csema));
+		if(($key == 6 or $key == 56 or $key == 57) and $csema) {
+			$date = explode("/",$csema);
+			if(count($date)!=3)
+			continue;
+			if($date[2] and strlen($date[2]) == 2) {
+				$date[2] = "20".$date[2];
+				$csema = implode("/",$date);
+			}
+		}
+		if($key == 9 and $csema == "Neigbour") {
+			$csema = "Neighbour";
+		}
 		if($key>=6 and $key<=16) {
+			if($csema == "") {
+				$csema = "Unknown";
+			}
 			$csema_data[$top_key][$other_headers[$key]] = $csema;
 		}
 		if($key>=17 and $key<=29) {
